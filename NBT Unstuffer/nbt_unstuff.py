@@ -61,7 +61,7 @@ def add_slot(slots, slot, i, is_drive):
     else:
         drive_usage = 0
     slots[i] = {}
-    slots[i]["path"] = "Inventory." + str(slot["Slot"])
+    slots[i]["slot_num"] = int(slot["Slot"])
     slots[i]["is_drive"] = is_drive
     slots[i]["usage"] = drive_usage
 
@@ -87,18 +87,26 @@ for datfile2 in glob.glob("playerdata/*.dat"):
         # Get each cell item ID and check if it equals the slot's item ID
         cell_info = c.get_cell_info()
         for key in cell_info.keys():
-            id_val = cell_info[key]["id"]
+            val = cell_info[key]["id"]
             # If the slot's item id is an ME cell.
-            if slot['id'] == int(id_val):
+            if slot['id'] == int(val):
                 # Get it's usage and append it to the slots list and the usages list
                 add_slot(slots, slot, i, True)
                 i += 1
         # Get each backpack item ID and check if it equals the slot's item ID
         backpacks = b.get_backpacks()
-        for key2 in backpacks:
-            value2 = backpacks[key2]["id"]
-            if slot['id'] == int(value2):
+        for key2 in backpacks.keys():
+            val2 = backpacks[key2]["id"]
+            if slot['id'] == int(val2):
                 add_slot(slots, slot, i, False)
                 i +=1
+        
+    for key3 in slots.keys():
+        val3 = slots[key3]
+        if not val3["is_drive"]:
+            backpack_data = player_dat.root["Inventory"][val3["slot_num"]]
+            # Do unstuff of data now :D
+    
     lenslots = len(slots.keys())
     print(f"Found {lenslots} slots containing ME drives or backpacks in the file: {datfile2}")
+
