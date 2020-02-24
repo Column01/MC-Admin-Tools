@@ -1,0 +1,10 @@
+
+**/.vscode/
+
+*.json
+
+*.code-workspace
+
+*.ps1
+
+*.dat
