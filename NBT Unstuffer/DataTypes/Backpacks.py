@@ -8,7 +8,6 @@ class Backpacks:
                 "id": 1
             }
         }   
-        super().__init__()
     
 
     def set_backpack_id(self, key, item_id):

@@ -18,7 +18,6 @@ class CellInfo:
                 "id": 3
             }
         }
-        super().__init__()
     
 
     def set_cell_id(self, key, item_id):
