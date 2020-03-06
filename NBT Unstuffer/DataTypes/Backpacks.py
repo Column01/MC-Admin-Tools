@@ -2,10 +2,12 @@ class Backpacks:
     def __init__(self):
         self.backpacks = {
             "ExtraUtilities:golden_bag": {
-                "id": 0
+                "id": 0,
+                "name": "eugoldenbag"
             },
             "rftools:storageModuleTabletItem": {
-                "id": 1
+                "id": 1,
+                "name": "rftoolstablet"
             }
         }   
     

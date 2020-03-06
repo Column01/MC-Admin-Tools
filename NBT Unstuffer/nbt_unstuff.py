@@ -2,6 +2,8 @@ import nbtlib
 import glob
 from DataTypes.Backpacks import Backpacks
 from DataTypes.CellInfo import CellInfo
+from Unstuffers.eu_goldenbag import ExtraUtilsGoldenBag
+from Unstuffers.rftools_tablet import RFToolsTablet
 
 
 def set_item_ids(ldat_files, b, c):
@@ -53,8 +55,8 @@ def set_cell_ids(ldat,c ):
                 c.set_cell_id(key, tag["V"])
 
 
-# Add an ME cell to
-def add_slot(slots, slot, i, is_drive):
+# Add an ME cell to slots dictionary
+def add_slot(slots, slot, i, is_drive, name):
     cell_info = c.get_cell_info()
     if is_drive:
         drive_usage = get_drive_usage(slot["id"], slot["tag"]["it"], cell_info, c)
@@ -62,6 +64,7 @@ def add_slot(slots, slot, i, is_drive):
         drive_usage = 0
     slots[i] = {}
     slots[i]["slot_num"] = int(slot["Slot"])
+    slots[i]["name"] = name
     slots[i]["is_drive"] = is_drive
     slots[i]["usage"] = drive_usage
 
@@ -91,22 +94,35 @@ for datfile2 in glob.glob("playerdata/*.dat"):
             # If the slot's item id is an ME cell.
             if slot['id'] == int(val):
                 # Get it's usage and append it to the slots list and the usages list
-                add_slot(slots, slot, i, True)
+                add_slot(slots, slot, i, True, "drive")
                 i += 1
         # Get each backpack item ID and check if it equals the slot's item ID
         backpacks = b.get_backpacks()
         for key2 in backpacks.keys():
             val2 = backpacks[key2]["id"]
             if slot['id'] == int(val2):
-                add_slot(slots, slot, i, False)
+                add_slot(slots, slot, i, False, backpacks[key2]["name"])
                 i +=1
-        
-    for key3 in slots.keys():
-        val3 = slots[key3]
-        if not val3["is_drive"]:
-            backpack_data = player_dat.root["Inventory"][val3["slot_num"]]
-            # Do unstuff of data now :D
-    
     lenslots = len(slots.keys())
     print(f"Found {lenslots} slots containing ME drives or backpacks in the file: {datfile2}")
-
+    
+    # Loop over all of the collected slots
+    for key3 in slots.keys():
+        val3 = slots[key3]
+        # If it is not a drive, that means we need to unstuff it.
+        if not val3["is_drive"]:
+            """
+            Loop over all inventory slots again
+            (need to do this to access their actualy data unfortunately, 
+            otherwise it just collects the labels for each "section" and not the actual data for the slot)
+            """
+            for slot in player_dat.root["Inventory"]:
+                # If the slot number is the slot of the bag
+                if slot["Slot"] == val3["slot_num"]:
+                    # If the name is set to RF Tools Tablet, unstuff the tablet
+                    if val3["name"] == "rftoolstablet":
+                        unstuffer = RFToolsTablet(slot)
+                        unstuffer.unstuff_rftools_tablet()
+                    elif val3["name"] == "eugoldenbag":
+                        unstuffer = ExtraUtilsGoldenBag(slot)
+                        unstuffer.unstuff_goldenbag()
