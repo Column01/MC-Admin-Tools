@@ -80,11 +80,12 @@ if confirm2.lower() == 'y':
     for fpath in glob.glob('achievements/*.json'):
         fname = os.path.basename(fpath)
         print(f"Opening file: {fpath}")
-        with open(fpath, 'r') as file:
-            jfile = json.load(file)
+        with open(fpath, 'r') as f:
+            jfile = json.load(f)
+            removed_relics = []
             for relic in relics:
-                removed_relics = []
                 status = relics.get(relic)
+                print(status)
                 if status == None:
                     print('An unexpected error occured. Please try again and if it continues, report it to Column01')
                     quit(0)
