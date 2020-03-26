@@ -111,11 +111,6 @@ for datfile2 in glob.glob("playerdata/*.dat"):
         val3 = slots[key3]
         # If it is not a drive, that means we need to unstuff it.
         if not val3["is_drive"]:
-            """
-            Loop over all inventory slots again
-            (need to do this to access their actualy data unfortunately, 
-            otherwise it just collects the labels for each "section" and not the actual data for the slot)
-            """
             for slot in player_dat.root["Inventory"]:
                 # If the slot number is the slot of the bag
                 if slot["Slot"] == val3["slot_num"]:
